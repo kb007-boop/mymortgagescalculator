@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MortgageClear — Payoff Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --slate: #1E3A5F;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --paper: #F7F4EF;
+    --ink: #1A1A2E;
+    --muted: #6B7280;
+    --white: #FFFFFF;
+    --green: #1A7A4A;
+    --red: #C0392B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); }
+
+  /* NAV */
+  nav { background: var(--navy); padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); letter-spacing: -0.5px; }
+  .logo span { color: var(--white); }
+  nav p { color: #8A9BB0; font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* HERO */
+  .hero { background: var(--navy); padding: 60px 40px 80px; text-align: center; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: var(--paper); clip-path: ellipse(55% 100% at 50% 100%); }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 56px); color: var(--white); line-height: 1.1; max-width: 700px; margin: 0 auto 16px; }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero p { color: #8A9BB0; font-size: 17px; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+  /* TABS */
+  .tabs { display: flex; justify-content: center; gap: 8px; padding: 32px 20px 0; flex-wrap: wrap; }
+  .tab { padding: 10px 24px; border: 2px solid var(--slate); border-radius: 100px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--slate); }
+  .tab.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+  .tab:hover:not(.active) { border-color: var(--navy); }
+
+  /* CALCULATOR CONTAINERS */
+  .calc-section { display: none; max-width: 900px; margin: 0 auto; padding: 40px 20px 60px; }
+  .calc-section.active { display: block; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  @media(max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .card { background: var(--white); border-radius: 16px; padding: 32px; box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+  .card h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 24px; color: var(--navy); }
+
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .input-wrap { position: relative; }
+  .input-wrap span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 500; }
+  .input-wrap input { width: 100%; padding: 13px 14px 13px 28px; border: 1.5px solid #E5E7EB; border-radius: 10px; font-size: 16px; font-family: 'Inter', sans-serif; transition: border-color 0.2s; background: var(--paper); }
+  .input-wrap input:focus { outline: none; border-color: var(--navy); background: var(--white); }
+  .input-wrap.pct span { left: auto; right: 14px; }
+  .input-wrap.pct input { padding-left: 14px; padding-right: 32px; }
+
+  .btn { width: 100%; padding: 15px; background: var(--navy); color: var(--gold); font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: none; border-radius: 10px; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .btn:hover { background: var(--slate); }
+
+  /* RESULTS */
+  .results { background: var(--navy); border-radius: 16px; padding: 32px; }
+  .results h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); margin-bottom: 24px; }
+  .result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: #8A9BB0; font-size: 13px; }
+  .result-val { color: var(--white); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .result-val.positive { color: #4ADE80; }
+  .result-val.negative { color: #F87171; }
+  .result-big { font-size: 28px; font-family: 'Playfair Display', serif; color: var(--gold); }
+
+  /* AMORTIZATION TABLE */
+  .table-wrap { overflow-x: auto; margin-top: 24px; border-radius: 12px; border: 1.5px solid #E5E7EB; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--navy); color: var(--gold); padding: 12px 16px; text-align: right; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
+  th:first-child { text-align: left; }
+  td { padding: 10px 16px; text-align: right; border-bottom: 1px solid #F3F4F6; font-variant-numeric: tabular-nums; }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #F9FAFB; }
+  tr.year-row td { background: #EFF6FF; font-weight: 600; }
+
+  /* AD PLACEHOLDER */
+  .ad-slot { background: #F3F4F6; border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; color: var(--muted); font-size: 12px; margin: 24px 0; }
+
+  /* FOOTER */
+  footer { background: var(--navy); color: #4B5E74; font-size: 12px; text-align: center; padding: 24px; margin-top: 40px; }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Mortgage<span>Clear</span></div>
+  <p>Free Mortgage Calculators</p>
+</nav>
+
+<div class="hero">
+  <h1>Pay off your mortgage <em>years early.</em></h1>
+  <p>Three calculators. No signup. See exactly how much you save with extra payments, when to refinance, and your full amortization schedule.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('extra')">Extra Payment</button>
+  <button class="tab" onclick="switchTab('refi')">Refinance Break-Even</button>
+  <button class="tab" onclick="switchTab('amort')">Amortization Table</button>
+</div>
+
+<!-- TAB 1: EXTRA PAYMENT -->
+<div id="tab-extra" class="calc-section active">
+  <div class="calc-grid">
+    <div class="card">
+      <h3>Your mortgage details</h3>
+      <div class="field"><label>Home Price</label><div class="input-wrap"><span>$</span><input id="ep-price" type="number" value="650000"></div></div>
+      <div class="field"><label>Down Payment</label><div class="input-wrap"><span>$</span><input id="ep-down" type="number" value="130000"></div></div>
+      <div class="field"><label>Interest Rate</label><div class="input-wrap pct"><span>%</span><input id="ep-rate" type="number" value="6.5" step="0.05"></div></div>
+      <div class="field"><label>Loan Term (years)</label><div class="input-wrap"><span>#</span><input id="ep-term" type="number" value="25"></div></div>
+      <div class="field"><label>Extra Monthly Payment</label><div class="input-wrap"><span>$</span><input id="ep-extra" type="number" value="500"></div></div>
+      <button class="btn" onclick="calcExtraPayment()">Calculate Savings →</button>
+    </div>
+    <div class="results" id="ep-results">
+      <h3>Your savings</h3>
+      <div class="result-row"><span class="result-label">Regular monthly payment</span><span class="result-val" id="ep-regular">—</span></div>
+      <div class="result-row"><span class="result-label">New monthly payment</span><span class="result-val" id="ep-new">—</span></div>
+      <div class="result-row"><span class="result-label">Original payoff</span><span class="result-val" id="ep-orig-payoff">—</span></div>
+      <div class="result-row"><span class="result-label">New payoff date</span><span class="result-val positive" id="ep-new-payoff">—</span></div>
+      <div class="result-row"><span class="result-label">Time saved</span><span class="result-val positive result-big" id="ep-time-saved">—</span></div>
+      <div class="result-row"><span class="result-label">Interest saved</span><span class="result-val positive" id="ep-int-saved">—</span></div>
+    </div>
+  </div>
+  <div class="ad-slot">📢 Advertisement — Google AdSense 728×90</div>
+</div>
+
+<!-- TAB 2: REFI -->
+<div id="tab-refi" class="calc-section">
+  <div class="calc-grid">
+    <div class="card">
+      <h3>Refinance details</h3>
+      <div class="field"><label>Current Loan Balance</label><div class="input-wrap"><span>$</span><input id="rf-balance" type="number" value="480000"></div></div>
+      <div class="field"><label>Current Interest Rate</label><div class="input-wrap pct"><span>%</span><input id="rf-curr-rate" type="number" value="7.2" step="0.05"></div></div>
+      <div class="field"><label>Remaining Term (years)</label><div class="input-wrap"><span>#</span><input id="rf-curr-term" type="number" value="22"></div></div>
+      <div class="field"><label>New Interest Rate</label><div class="input-wrap pct"><span>%</span><input id="rf-new-rate" type="number" value="5.9" step="0.05"></div></div>
+      <div class="field"><label>New Loan Term (years)</label><div class="input-wrap"><span>#</span><input id="rf-new-term" type="number" value="25"></div></div>
+      <div class="field"><label>Closing Costs</label><div class="input-wrap"><span>$</span><input id="rf-costs" type="number" value="8500"></div></div>
+      <button class="btn" onclick="calcRefi()">Calculate Break-Even →</button>
+    </div>
+    <div class="results" id="rf-results">
+      <h3>Refinance analysis</h3>
+      <div class="result-row"><span class="result-label">Current monthly payment</span><span class="result-val" id="rf-curr-pmt">—</span></div>
+      <div class="result-row"><span class="result-label">New monthly payment</span><span class="result-val" id="rf-new-pmt">—</span></div>
+      <div class="result-row"><span class="result-label">Monthly savings</span><span class="result-val positive" id="rf-monthly-save">—</span></div>
+      <div class="result-row"><span class="result-label">Break-even point</span><span class="result-val result-big" id="rf-breakeven">—</span></div>
+      <div class="result-row"><span class="result-label">5-year net savings</span><span class="result-val positive" id="rf-5yr">—</span></div>
+      <div class="result-row"><span class="result-label">Total interest (current)</span><span class="result-val negative" id="rf-int-curr">—</span></div>
+      <div class="result-row"><span class="result-label">Total interest (new)</span><span class="result-val" id="rf-int-new">—</span></div>
+    </div>
+  </div>
+  <div class="ad-slot">📢 Advertisement — Google AdSense 728×90</div>
+</div>
+
+<!-- TAB 3: AMORTIZATION -->
+<div id="tab-amort" class="calc-section">
+  <div class="card" style="margin-bottom:24px;">
+    <div class="calc-grid" style="align-items:end;">
+      <div>
+        <div class="field"><label>Loan Amount</label><div class="input-wrap"><span>$</span><input id="am-amount" type="number" value="520000"></div></div>
+        <div class="field"><label>Interest Rate</label><div class="input-wrap pct"><span>%</span><input id="am-rate" type="number" value="6.25" step="0.05"></div></div>
+      </div>
+      <div>
+        <div class="field"><label>Loan Term (years)</label><div class="input-wrap"><span>#</span><input id="am-term" type="number" value="25"></div></div>
+        <button class="btn" onclick="calcAmort()">Generate Schedule →</button>
+      </div>
+    </div>
+  </div>
+  <div class="ad-slot">📢 Advertisement — Google AdSense 728×90</div>
+  <div class="table-wrap" id="amort-table-wrap" style="display:none;">
+    <table id="amort-table">
+      <thead><tr><th>Year</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+      <tbody id="amort-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  <p>MortgageClear is for informational purposes only. Consult a licensed mortgage professional before making financial decisions. | <a href="#">Privacy</a> | <a href="#">Disclaimer</a></p>
+</footer>
+
+<script>
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-CA'); }
+function fmtN(n) { return Math.round(n).toLocaleString('en-CA'); }
+
+function pmt(rate, nper, pv) {
+  if (rate === 0) return pv / nper;
+  return pv * rate * Math.pow(1 + rate, nper) / (Math.pow(1 + rate, nper) - 1);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.calc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function calcExtraPayment() {
+  const price = +document.getElementById('ep-price').value;
+  const down = +document.getElementById('ep-down').value;
+  const annualRate = +document.getElementById('ep-rate').value / 100;
+  const termYears = +document.getElementById('ep-term').value;
+  const extra = +document.getElementById('ep-extra').value;
+  const principal = price - down;
+  const r = annualRate / 12;
+  const n = termYears * 12;
+  const regPmt = pmt(r, n, principal);
+  const newPmt = regPmt + extra;
+
+  // Regular total interest
+  const regTotalInterest = regPmt * n - principal;
+
+  // Extra payment payoff
+  let bal = principal;
+  let months = 0;
+  let totalInterest = 0;
+  while (bal > 0.01 && months < n * 2) {
+    const intCharge = bal * r;
+    totalInterest += intCharge;
+    const prinPaid = Math.min(newPmt - intCharge, bal);
+    bal -= prinPaid;
+    months++;
+  }
+  const saved = n - months;
+  const savedYears = Math.floor(saved / 12);
+  const savedMonths = saved % 12;
+  const intSaved = regTotalInterest - totalInterest;
+
+  const now = new Date();
+  const origDate = new Date(now.getFullYear(), now.getMonth() + n);
+  const newDate = new Date(now.getFullYear(), now.getMonth() + months);
+
+  document.getElementById('ep-regular').textContent = fmt(regPmt) + '/mo';
+  document.getElementById('ep-new').textContent = fmt(newPmt) + '/mo';
+  document.getElementById('ep-orig-payoff').textContent = origDate.toLocaleDateString('en-CA', { year: 'numeric', month: 'short' });
+  document.getElementById('ep-new-payoff').textContent = newDate.toLocaleDateString('en-CA', { year: 'numeric', month: 'short' });
+  document.getElementById('ep-time-saved').textContent = savedYears + 'y ' + savedMonths + 'm earlier';
+  document.getElementById('ep-int-saved').textContent = fmt(intSaved) + ' saved';
+}
+
+function calcRefi() {
+  const bal = +document.getElementById('rf-balance').value;
+  const currRate = +document.getElementById('rf-curr-rate').value / 100 / 12;
+  const currTerm = +document.getElementById('rf-curr-term').value * 12;
+  const newRate = +document.getElementById('rf-new-rate').value / 100 / 12;
+  const newTerm = +document.getElementById('rf-new-term').value * 12;
+  const costs = +document.getElementById('rf-costs').value;
+
+  const currPmt = pmt(currRate, currTerm, bal);
+  const newPmt = pmt(newRate, newTerm, bal);
+  const monthlySave = currPmt - newPmt;
+  const breakEvenMonths = costs / monthlySave;
+  const breakEvenYears = Math.floor(breakEvenMonths / 12);
+  const breakEvenMo = Math.round(breakEvenMonths % 12);
+  const fiveYrSave = monthlySave * 60 - costs;
+  const currTotalInt = currPmt * currTerm - bal;
+  const newTotalInt = newPmt * newTerm - bal;
+
+  document.getElementById('rf-curr-pmt').textContent = fmt(currPmt) + '/mo';
+  document.getElementById('rf-new-pmt').textContent = fmt(newPmt) + '/mo';
+  document.getElementById('rf-monthly-save').textContent = fmt(monthlySave) + '/mo';
+  document.getElementById('rf-breakeven').textContent = breakEvenYears + 'y ' + breakEvenMo + 'm';
+  document.getElementById('rf-5yr').textContent = fmt(Math.max(0, fiveYrSave));
+  document.getElementById('rf-int-curr').textContent = fmt(currTotalInt);
+  document.getElementById('rf-int-new').textContent = fmt(newTotalInt);
+}
+
+function calcAmort() {
+  const amount = +document.getElementById('am-amount').value;
+  const annualRate = +document.getElementById('am-rate').value / 100;
+  const termYears = +document.getElementById('am-term').value;
+  const r = annualRate / 12;
+  const n = termYears * 12;
+  const payment = pmt(r, n, amount);
+  let bal = amount;
+  const tbody = document.getElementById('amort-body');
+  tbody.innerHTML = '';
+
+  for (let yr = 1; yr <= termYears; yr++) {
+    let yearPrin = 0, yearInt = 0;
+    for (let mo = 0; mo < 12; mo++) {
+      if (bal <= 0) break;
+      const intCharge = bal * r;
+      yearInt += intCharge;
+      const prinPaid = Math.min(payment - intCharge, bal);
+      yearPrin += prinPaid;
+      bal -= prinPaid;
+    }
+    const tr = document.createElement('tr');
+    tr.className = 'year-row';
+    tr.innerHTML = `<td>Year ${yr}</td><td>${fmt(payment * 12)}</td><td>${fmt(yearPrin)}</td><td>${fmt(yearInt)}</td><td>${fmt(Math.max(0,bal))}</td>`;
+    tbody.appendChild(tr);
+  }
+  document.getElementById('amort-table-wrap').style.display = 'block';
+}
+
+// Auto-calculate on load
+calcExtraPayment();
+calcRefi();
+calcAmort();
+</script>
+</body>
+</html>
