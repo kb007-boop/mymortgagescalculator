@@ -17,7 +17,7 @@
 <meta property="og:title" content="Free Mortgage Calculator — Extra Payments, Refinance & Amortization">
 <meta property="og:description" content="See how extra payments save years of interest, find your refinance break-even point, and generate a full amortization schedule. Free, no signup.">
 <meta property="og:url" content="https://mymortgagescalculator.org/">
-<meta property="og:site_name" content="MyMortgagesCalculator.org">
+<meta property="og:site_name" content="MyMortgageCalculator.org">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
@@ -89,6 +89,9 @@
 }
 </script>
 
+<meta name="theme-color" content="#0D1B2A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -172,6 +175,24 @@
   /* AD PLACEHOLDER */
   .ad-slot { background: #F3F4F6; border: 2px dashed #D1D5DB; border-radius: 8px; padding: 20px; text-align: center; color: var(--muted); font-size: 12px; margin: 24px 0; }
 
+  /* SEO CONTENT */
+  .seo-section { max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+  .seo-section h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); margin-bottom: 12px; }
+  .seo-section p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 32px; }
+  .seo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+  @media(max-width: 680px) { .seo-grid { grid-template-columns: 1fr; } }
+  .seo-card { background: var(--white); border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .seo-card h3 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .seo-card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.6; }
+
+  /* FAQ */
+  .faq-section { max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+  .faq-section h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); margin-bottom: 24px; }
+  .faq-item { border-bottom: 1px solid #E5E7EB; padding: 20px 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .faq-item p { font-size: 14px; color: var(--muted); line-height: 1.7; margin: 0; }
+
   /* FOOTER */
   footer { background: var(--navy); color: #4B5E74; font-size: 12px; text-align: center; padding: 24px; margin-top: 40px; }
   footer a { color: var(--gold); text-decoration: none; }
@@ -179,11 +200,14 @@
 </head>
 <body>
 
+<header>
 <nav>
-  <div class="logo">Mortgage<span>Clear</span></div>
+  <div class="logo">MyMortgages<span>Calculator</span></div>
   <p>Free Mortgage Calculators</p>
 </nav>
+</header>
 
+<main>
 <div class="hero">
   <h1>Pay off your mortgage <em>years early.</em></h1>
   <p>Three calculators. No signup. See exactly how much you save with extra payments, when to refinance, and your full amortization schedule.</p>
@@ -197,6 +221,7 @@
 
 <!-- TAB 1: EXTRA PAYMENT -->
 <div id="tab-extra" class="calc-section active">
+  <h2 style="text-align:center;font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:24px;">Extra Mortgage Payment Calculator</h2>
   <div class="calc-grid">
     <div class="card">
       <h3>Your mortgage details</h3>
@@ -222,6 +247,7 @@
 
 <!-- TAB 2: REFI -->
 <div id="tab-refi" class="calc-section">
+  <h2 style="text-align:center;font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:24px;">Refinance Break-Even Calculator</h2>
   <div class="calc-grid">
     <div class="card">
       <h3>Refinance details</h3>
@@ -249,6 +275,7 @@
 
 <!-- TAB 3: AMORTIZATION -->
 <div id="tab-amort" class="calc-section">
+  <h2 style="text-align:center;font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:24px;">Mortgage Amortization Schedule Calculator</h2>
   <div class="card" style="margin-bottom:24px;">
     <div class="calc-grid" style="align-items:end;">
       <div>
@@ -269,6 +296,53 @@
     </table>
   </div>
 </div>
+
+<!-- SEO CONTENT SECTION -->
+<section class="seo-section" aria-label="About our mortgage calculators">
+  <h2>Free Mortgage Calculators — No Signup Required</h2>
+  <p>MyMortgagesCalculator.org gives you three powerful mortgage tools in one place. Whether you want to see how extra payments shrink your loan, find out if refinancing makes sense, or get a full year-by-year breakdown of your payments — everything runs instantly in your browser with no account needed.</p>
+  <div class="seo-grid">
+    <div class="seo-card">
+      <h3>Extra Payment Calculator</h3>
+      <p>Enter your loan details and an extra monthly amount to instantly see how many years you shave off your mortgage and exactly how much interest you save over the life of the loan.</p>
+    </div>
+    <div class="seo-card">
+      <h3>Refinance Break-Even Calculator</h3>
+      <p>Compare your current mortgage to a new rate and term. See your monthly savings, break-even point in months, and net savings over 5 years — so you know if refinancing is worth the closing costs.</p>
+    </div>
+    <div class="seo-card">
+      <h3>Amortization Schedule Calculator</h3>
+      <p>Generate a complete year-by-year amortization table showing annual principal paid, interest paid, and remaining balance for any loan amount, rate, and term.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="faq-section" aria-label="Frequently asked questions">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <h3>How much do extra mortgage payments save?</h3>
+    <p>Extra monthly payments reduce your principal balance faster, which lowers the total interest you pay and shortens your loan term. Even $200–$500 extra per month can save tens of thousands of dollars over a 25-year mortgage. Use our extra payment calculator above to see your exact savings.</p>
+  </div>
+  <div class="faq-item">
+    <h3>How do I calculate my refinance break-even point?</h3>
+    <p>Divide your total closing costs by your monthly payment savings. For example, $8,000 in closing costs with $200/month savings means a 40-month (3.3 year) break-even. If you plan to stay in your home longer than that, refinancing makes financial sense. Our calculator does this instantly.</p>
+  </div>
+  <div class="faq-item">
+    <h3>What is an amortization schedule?</h3>
+    <p>An amortization schedule shows every payment broken down into the principal and interest portions, along with your remaining loan balance. In the early years of a mortgage, most of your payment goes to interest — the schedule shows exactly when that flips.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Is this mortgage calculator free?</h3>
+    <p>Yes — all three calculators on MyMortgagesCalculator.org are completely free. There is no account, no email signup, and no personal information required. Everything runs directly in your browser.</p>
+  </div>
+  <div class="faq-item">
+    <h3>How accurate are the calculations?</h3>
+    <p>The calculations use the standard mortgage amortization formula and are accurate for fixed-rate mortgages. Results are for informational purposes — consult a licensed mortgage professional before making financial decisions.</p>
+  </div>
+</section>
+
+</main>
 
 <footer>
   <p>MyMortgagesCalculator.org is for informational purposes only. Consult a licensed mortgage professional before making financial decisions. | <a href="/privacy">Privacy Policy</a> | <a href="/disclaimer">Disclaimer</a></p>
